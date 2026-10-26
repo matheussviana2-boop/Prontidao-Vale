@@ -155,8 +155,8 @@ var API=(function(){
   <button class="btn" id="sairtv" title="Sair do modo TV (Esc)">✕ Sair</button>
 </div>
 <div class="sub">
-  <button class="tab" id="t-agora" aria-selected="true">Rodando agora</button>
-  <button class="tab" id="t-dia" aria-selected="false">Viagens finalizadas do dia</button>
+  <button class="tab" id="t-agora" aria-selected="true">Monitoramento</button>
+  <button class="tab" id="t-dia" aria-selected="false">Viagens finalizadas</button>
   <span class="sp"></span><span class="info" id="filtroInfo"></span>
 </div>
 <div id="msg"></div>
@@ -185,6 +185,7 @@ function erro(e){$('msg').innerHTML='<div class="msg">'+esc(e&&e.message||e)+'</
 /* abas */
 function aba(n){
   ABA=n;
+  $('pills').style.visibility=n==='agora'?'':'hidden';
   $('v-agora').style.display=n==='agora'?'':'none'; $('v-dia').style.display=n==='dia'?'':'none';
   $('t-agora').setAttribute('aria-selected',n==='agora'); $('t-dia').setAttribute('aria-selected',n==='dia');
   if(n==='dia'&&!D2) carregar2(); else if(n==='dia') tela2();
