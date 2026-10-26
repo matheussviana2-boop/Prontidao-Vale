@@ -232,7 +232,7 @@ function card(l){
     '<div class="ln">Carro <b>'+esc(l.frota||'—')+'</b>'+(l.linha?' · '+esc(l.linha):'')+'</div>'+
     '<div class="tx'+(l.transMin>=15?' atr':'')+'"'+(l.transMin>=15?' title="Sem transmitir há '+dur(l.transMin)+'"':'')+'>Transmissão <b>'+esc(l.transmissao||'—')+'</b>'+'</div>'+
     '<div class="t"><span class="lb">'+rotulo(l)+'</span><b>'+v+'</b></div>'+
-    (l.teste?'<div class="h">Teste '+esc(hd(l.teste))+' → '+esc(hd(l.validade))+'</div>':'')+
+    (l.teste?'<div class="h">Teste '+esc(cls==='OK'||cls==='VENCENDO'?hd(l.teste):l.teste)+' → '+esc(cls==='OK'||cls==='VENCENDO'?hd(l.validade):(l.validade||'—'))+'</div>':'')+
   '</div>';
 }
 var FILTROS=[['TODOS','Logados','var(--brand)'],['MOV','Em movimento','var(--brand)'],['INAPTO','Inapto','var(--red)'],['SEM_TESTE','Sem teste','var(--orange)'],['VENCENDO','Vence ≤ 2 h','var(--amber)']];
