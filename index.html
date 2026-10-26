@@ -85,6 +85,9 @@ input[type=search]{width:220px}
 .c .t .lb{font:800 11px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--k)}
 .c .t b{font:700 12px "JetBrains Mono",monospace;color:var(--k);white-space:nowrap}
 .c .h{font-size:11px;color:#2b4443}
+.c .tx{font-size:11px;color:#2b4443}
+.c .tx b{font:700 11px "JetBrains Mono",monospace;color:#0b1f1f}
+.c .tx.atr,.c .tx.atr b{color:#b42318;font-weight:700}
 .c.INAPTO,.c.VENCIDO{--tb:#fbd3ce;--tl:#ee9a91;--k:#a8190f}
 .c.SEM_TESTE{--tb:var(--orange-bg);--tl:var(--orange-l);--k:#a34507}
 .c.VENCENDO{--tb:var(--amber-bg);--tl:var(--amber-l);--k:#7a4f00}
@@ -227,6 +230,7 @@ function card(l){
       '<span class="vel '+(l.veloc>0?'on':'off')+'">'+(l.veloc||0)+' km/h</span></div>'+
     '<div class="b">Matrícula <b>'+esc(l.matricula)+'</b></div>'+
     '<div class="ln">Carro <b>'+esc(l.frota||'—')+'</b>'+(l.linha?' · '+esc(l.linha):'')+'</div>'+
+    '<div class="tx'+(l.transMin>=15?' atr':'')+'"'+(l.transMin>=15?' title="Sem transmitir há '+dur(l.transMin)+'"':'')+'>Transmissão <b>'+esc(l.transmissao||'—')+'</b>'+'</div>'+
     '<div class="t"><span class="lb">'+rotulo(l)+'</span><b>'+v+'</b></div>'+
     (l.teste?'<div class="h">Teste '+esc(hd(l.teste))+' → '+esc(hd(l.validade))+'</div>':'')+
   '</div>';
