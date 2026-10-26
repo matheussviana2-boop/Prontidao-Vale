@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Prontidão dos motoristas · Vale</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{--bg:#EEF1F0;--card:#fff;--ink:#15201C;--muted:#5D6B66;--line:#D7DEDB;--accent:#0E6E62;
+        --ok:#1E8449;--okbg:#DDF1E4;--bad:#C0392B;--badbg:#F8DEDA;--warn:#B7790A;--warnbg:#F6EACB;--gray:#5D6B66;--graybg:#E6EBE9}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:14px}
+  .top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+  h1{margin:0;font:700 28px/1.1 "Barlow Semi Condensed",sans-serif}
+  .sub{color:var(--muted);font-size:12px}
+  .mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+  .tab{font:inherit;font-weight:600;background:transparent;color:var(--muted);border:0;border-bottom:3px solid transparent;padding:10px 16px;cursor:pointer}
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+  .bar .left{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  input[type=search],input[type=date]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  input[type=search]{width:280px;max-width:100%}
+  .btn{font:inherit;font-weight:600;border:1px solid var(--accent);border-radius:8px;padding:7px 14px;cursor:pointer;background:var(--accent);color:#fff}
+  .btn:disabled{opacity:.5;cursor:wait}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr)}}
+  .kpi{font:inherit;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;border-top:5px solid var(--line);cursor:pointer;color:var(--ink)}
+  .kpi b{display:block;font:700 40px/1 "Barlow Semi Condensed",sans-serif}
+  .kpi span{font-size:13px;color:var(--muted)}
+  .kpi[aria-pressed="true"]{outline:2px solid var(--accent)}
+  .kpi.OK{border-top-color:var(--ok)} .kpi.OK b{color:var(--ok)}
+  .kpi.SEM_TESTE{border-top-color:var(--warn)} .kpi.SEM_TESTE b{color:var(--warn)}
+  .kpi.INAPTO{border-top-color:var(--bad)} .kpi.INAPTO b{color:var(--bad)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px}
+  .tbl{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;min-width:820px}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);background:#F6F8F7;white-space:nowrap}
+  td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr.INAPTO td:first-child{box-shadow:inset 4px 0 var(--bad)}
+  tr.SEM_TESTE td:first-child{box-shadow:inset 4px 0 var(--warn)}
+  .pill{display:inline-block;border-radius:999px;padding:3px 12px;font-size:12px;font-weight:600;white-space:nowrap}
+  .pill.OK{background:var(--okbg);color:var(--ok)} .pill.INAPTO{background:var(--badbg);color:var(--bad)}
+  .pill.SEM_TESTE{background:var(--warnbg);color:var(--warn)} .pill.NAO_IDENTIFICADO,.pill.NAO_AVALIADO{background:var(--graybg);color:var(--gray)}
+  .name{font-weight:600}
+  .sub.atraso{color:var(--bad);font-weight:600}
+  .sub.aviso{color:var(--warn);font-weight:600}
+  .mov{font-size:13px;font-weight:600;white-space:nowrap}
+  .mov.on{color:var(--accent)} .mov.lig{color:var(--ink)} .mov.off{color:var(--muted);font-weight:400}
+  .kpi small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+  .kpi small b{display:inline;font:600 12px "IBM Plex Sans",sans-serif;color:inherit}
+  select{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+  label.chk{font-size:13px;color:var(--muted);display:flex;gap:6px;align-items:center}
+  .msg{padding:10px 14px;border-radius:8px;background:var(--badbg);color:var(--bad)}
+  .empty{padding:28px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<script>
+/* ===== CONFIGURAÇÃO DO PAINEL ONLINE ===== */
+var BACKEND_URL = 'https://script.google.com/macros/s/AKfycbzl19qpxppGY4FB5scTyG5GiOAwKJjsPt_tMHwAlNRGhaqocNT8PjGXEtNWUCq4QYUK/exec';   // URL do App da Web do Backend (termina em /exec)
+/* ========================================= */
+var CHAVE = new URLSearchParams(location.search).get('k') || '';
+var _cache = null, _cacheEm = 0, _pend = null;
+function buscar(){
+  if(_cache && Date.now()-_cacheEm < 20000) return Promise.resolve(_cache);
+  if(_pend) return _pend;
+  _pend = fetch(BACKEND_URL+(CHAVE?'?k='+encodeURIComponent(CHAVE):'')).then(function(r){return r.json();}).then(function(j){
+    _pend=null; if(j.erro) throw new Error(j.erro);
+    _cache=j; _cacheEm=Date.now(); avisoAtraso(j); return j;
+  }, function(e){ _pend=null; throw new Error('Não foi possível buscar os dados ('+e.message+').'); });
+  return _pend;
+}
+function avisoAtraso(j){
+  var el=document.getElementById('aviso'); if(!el) return;
+  var min = j.agoraRecebidoEm ? Math.round((j.servidorEm - j.agoraRecebidoEm)/60000) : null;
+  el.innerHTML = (min===null || min>10)
+    ? '<div class="msg">Os dados não são atualizados '+(min===null?'ainda':'há '+min+' min')+'. O coletor pode estar desligado.</div>' : '';
+}
+var google={script:{run:{withSuccessHandler:function(ok){var fail=null;var o={
+  withFailureHandler:function(f){fail=f;return o;},
+  painelAgora:function(){buscar().then(function(j){ if(!j.agora) throw new Error('Ainda não chegaram dados do coletor.'); ok(j.agora); }).catch(function(e){ if(fail) fail(e); });},
+  viagensDoDia:function(){buscar().then(function(j){ ok(j.dia); }).catch(function(e){ if(fail) fail(e); });}
+};return o;}}}};
+</script>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="sub">Univale · Vale · ICS × Prontos</div>
+      <h1>Prontidão dos motoristas</h1>
+    </div>
+    <div class="left" style="display:flex;gap:8px;align-items:center">
+      <label class="sub" for="base">Base</label>
+      <select id="base" onchange="tela1();tela2()"><option value="">Todas</option></select>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-agora" aria-selected="true" onclick="aba('agora')">Rodando agora</button>
+    <button class="tab" role="tab" id="t-dia" aria-selected="false" onclick="aba('dia')">Viagens finalizadas do dia</button>
+  </div>
+  <div id="msg"></div>
+  <div id="aviso"></div>
+
+  <!-- TELA 1: tempo real -->
+  <section id="v-agora" style="display:flex;flex-direction:column;gap:14px">
+    <div class="bar">
+      <div class="left">
+        <input type="search" id="q1" placeholder="Buscar motorista, matrícula ou frota" oninput="tela1()">
+        <label class="chk"><input type="checkbox" id="soMov" onchange="tela1()"> Só quem está dirigindo agora</label>
+      </div>
+      <div class="left"><span class="sub" id="info1">Carregando…</span><button class="btn" id="b1" onclick="carregar1()">Atualizar</button></div>
+    </div>
+    <div class="kpis" id="k1"></div>
+    <div class="card"><div class="tbl" id="g1"><div class="empty">Consultando veículos e testes…</div></div></div>
+    <div class="sub" id="nota1"></div>
+  </section>
+
+  <!-- TELA 2: viagens finalizadas -->
+  <section id="v-dia" style="display:none;flex-direction:column;gap:14px">
+    <div class="bar">
+      <div class="left">
+        <input type="hidden" id="dia"><span class="sub" style="font-weight:600">Hoje</span>
+        <input type="search" id="q2" placeholder="Buscar motorista, matrícula, linha ou frota" oninput="tela2()">
+      </div>
+      <div class="left"><span class="sub" id="info2"></span><button class="btn" id="b2" onclick="carregar2()">Atualizar</button></div>
+    </div>
+    <div class="kpis" id="k2"></div>
+    <div class="card"><div class="tbl" id="g2"><div class="empty">Carregando viagens…</div></div></div>
+    <div class="sub" id="nota2"></div>
+  </section>
+</div>
+
+<script>
+var ROT={OK:'Teste OK',SEM_TESTE:'Sem teste',INAPTO:'Teste inapto',NAO_IDENTIFICADO:'Não identificado',NAO_AVALIADO:'Não avaliado'};
+var CATS=['OK','SEM_TESTE','INAPTO'];
+var D1=null,D2=null,F1='',F2='',SEG=120,RESTA=SEG;
+
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function erro(e){document.getElementById('msg').innerHTML='<div class="msg">'+esc(e.message||e)+'</div>';}
+function pill(c){return '<span class="pill '+c+'">'+esc(ROT[c]||c)+'</span>';}
+function kpis(el,dados,filtro,fn,rotTotal){
+  var c={}; dados.forEach(function(l){c[l.cat]=(c[l.cat]||0)+1;});
+  var total=dados.filter(function(l){return CATS.indexOf(l.cat)>=0}).length;
+  var h='<button class="kpi" aria-pressed="'+(filtro===''?'true':'false')+'" onclick="'+fn+'(\'\')"><b>'+total+'</b><span>'+rotTotal+'</span></button>';
+  CATS.forEach(function(k){h+='<button class="kpi '+k+'" aria-pressed="'+(filtro===k?'true':'false')+'" onclick="'+fn+'(\''+k+'\')"><b>'+(c[k]||0)+'</b><span>'+ROT[k]+'</span></button>';});
+  document.getElementById(el).innerHTML=h;
+}
+function aba(n){
+  document.getElementById('v-agora').style.display=n==='agora'?'flex':'none';
+  document.getElementById('v-dia').style.display=n==='dia'?'flex':'none';
+  document.getElementById('t-agora').setAttribute('aria-selected',n==='agora');
+  document.getElementById('t-dia').setAttribute('aria-selected',n==='dia');
+  if(n==='dia'&&!D2) carregar2();
+}
+
+/* ---------- Tela 1: rodando agora ---------- */
+function carregar1(){
+  var b=document.getElementById('b1'); b.disabled=true;
+  google.script.run.withSuccessHandler(function(r){b.disabled=false;D1=r;RESTA=SEG;document.getElementById('msg').innerHTML='';tela1();})
+    .withFailureHandler(function(e){b.disabled=false;RESTA=SEG;erro(e);}).painelAgora();
+}
+function tempo(m){ return m<60? m+' min' : Math.floor(m/60)+' h'+(m%60?' '+(m%60)+' min':''); }
+function filtro1(k){F1=(F1===k?'':k);tela1();}
+function baseSel(){ return document.getElementById('base').value; }
+function atualizarBases(){
+  var sel=document.getElementById('base'), atual=sel.value, b={};
+  [D1,D2].forEach(function(D){ if(D) D.linhas.forEach(function(l){ if(l.base) b[l.base]=1; }); });
+  var lista=Object.keys(b).sort();
+  sel.innerHTML='<option value="">Todas</option>'+lista.map(function(x){return '<option'+(x===atual?' selected':'')+'>'+esc(x)+'</option>';}).join('');
+}
+function movTxt(l){
+  if(l.veloc>0) return '<span class="mov on">Dirigindo · '+l.veloc+' km/h</span>';
+  if(l.ign) return '<span class="mov lig">Parado, ignição ligada</span>';
+  return '<span class="mov off">Desligado</span>';
+}
+function extraKpi(el,cat,txt){
+  var k=document.querySelector('#'+el+' .kpi.'+cat+' span'); if(k&&txt) k.insertAdjacentHTML('afterend','<small>'+txt+'</small>');
+}
+function tela1(){
+  if(!D1) return;
+  atualizarBases();
+  var base=baseSel(), soMov=document.getElementById('soMov').checked;
+  var doBase=D1.linhas.filter(function(l){ return (!base||l.base===base) && (!soMov||l.veloc>0); });
+  kpis('k1',doBase,F1,'filtro1',soMov?'Motoristas dirigindo':'Motoristas rodando');
+  var dirig=function(c){return doBase.filter(function(l){return l.cat===c&&l.veloc>0}).length;};
+  var vence=doBase.filter(function(l){return l.cat==='OK'&&l.venceMin!=null&&l.venceMin<=120}).length;
+  if(!soMov){ extraKpi('k1','SEM_TESTE','<b>'+dirig('SEM_TESTE')+'</b> dirigindo agora'); extraKpi('k1','INAPTO','<b>'+dirig('INAPTO')+'</b> dirigindo agora'); }
+  extraKpi('k1','OK','<b>'+vence+'</b> vencem em até 2 h');
+  var tot=document.querySelector('#k1 .kpi:first-child span');
+  if(tot) tot.insertAdjacentHTML('afterend','<small><b>'+doBase.filter(function(l){return CATS.indexOf(l.cat)>=0&&l.veloc>0}).length+'</b> dirigindo agora</small>');
+  var q=document.getElementById('q1').value.trim().toUpperCase();
+  var rows=doBase.filter(function(l){
+    if(CATS.indexOf(l.cat)<0) return false;
+    if(F1&&l.cat!==F1) return false;
+    return !q||(l.motoristaICS+' '+l.matricula+' '+l.frota+' '+l.chapa).toUpperCase().indexOf(q)>=0;
+  });
+  document.getElementById('g1').innerHTML=!rows.length?'<div class="empty">Nenhum motorista com esse filtro.</div>':
+    '<table><thead><tr><th>Teste</th><th>Motorista</th><th>Veículo</th><th>Agora</th><th>Linha</th><th>Última transmissão</th><th>Último teste</th><th>Válido até</th></tr></thead><tbody>'+
+    rows.map(function(l){
+      return '<tr class="'+l.cat+'"><td>'+pill(l.cat)+(l.detalhe?'<div class="sub">'+esc(l.detalhe)+'</div>':'')+'</td>'+
+        '<td><div class="name">'+esc(l.motoristaICS)+'</div><div class="sub mono">Mat. '+esc(l.matricula)+'</div></td>'+
+        '<td class="mono">'+esc(l.frota)+'<div class="sub">'+[l.chapa,l.base].filter(Boolean).map(esc).join(' · ')+'</div></td>'+
+        '<td>'+movTxt(l)+'</td>'+
+        '<td>'+esc(l.linha||'—')+'</td>'+
+        '<td class="mono">'+esc(l.transmissao||'—')+(l.transMin!=null?'<div class="sub'+(l.transMin>=15?' atraso':'')+'">'+(l.transMin<1?'agora':'há '+tempo(l.transMin))+'</div>':'')+'</td>'+
+        '<td class="mono">'+esc(l.teste||'—')+'</td>'+
+        '<td class="mono">'+esc(l.validade||'—')+(l.cat==='OK'&&l.venceMin!=null&&l.venceMin<=120?'<div class="sub aviso">vence em '+tempo(Math.max(l.venceMin,0))+'</div>':'')+'</td></tr>';
+    }).join('')+'</tbody></table>';
+  var ni=D1.linhas.filter(function(l){return l.cat==='NAO_IDENTIFICADO'});
+  document.getElementById('nota1').textContent=ni.length?ni.length+' login(s) sem matrícula identificada no cadastro (ex.: '+ni.slice(0,3).map(function(l){return l.motoristaICS}).join(', ')+') não entram na contagem.':'';
+}
+function tique(){
+  RESTA--;
+  if(D1) document.getElementById('info1').textContent='Atualizado às '+D1.atualizadoEm.substring(11,16)+' · próxima em '+Math.max(RESTA,0)+' s';
+  if(RESTA<=0){RESTA=SEG;carregar1();}
+}
+
+/* ---------- Tela 2: viagens finalizadas ---------- */
+function hojeISO(){var d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().substring(0,10);}
+function carregar2(){
+  var inp=document.getElementById('dia'); if(!inp.value) inp.value=hojeISO();
+  var b=document.getElementById('b2'); b.disabled=true;
+  google.script.run.withSuccessHandler(function(r){b.disabled=false;D2=r;tela2();})
+    .withFailureHandler(function(e){b.disabled=false;erro(e);}).viagensDoDia(inp.value);
+}
+function filtro2(k){F2=(F2===k?'':k);tela2();}
+function tela2(){
+  if(!D2) return;
+  atualizarBases();
+  var base=baseSel();
+  var doBase=D2.linhas.filter(function(l){ return !base||l.base===base; });
+  kpis('k2',doBase,F2,'filtro2','Viagens finalizadas');
+  document.getElementById('info2').textContent=D2.ultimaColeta?'Atualizado '+D2.ultimaColeta:'';
+  var q=document.getElementById('q2').value.trim().toUpperCase();
+  var rows=doBase.filter(function(l){
+    if(CATS.indexOf(l.cat)<0) return false;
+    if(F2&&l.cat!==F2) return false;
+    return !q||(l.motorista+' '+l.matricula+' '+l.linha+' '+l.itinerario+' '+l.frota).toUpperCase().indexOf(q)>=0;
+  });
+  document.getElementById('g2').innerHTML=!rows.length?'<div class="empty">'+(D2.linhas.length?'Nenhuma viagem com esse filtro.':'Nenhuma viagem finalizada gravada para esse dia.')+'</div>':
+    '<table><thead><tr><th>Teste</th><th>Motorista</th><th>Viagem</th><th>Veículo</th><th>Partida</th><th>Chegada</th><th>Teste do motorista</th></tr></thead><tbody>'+
+    rows.map(function(l){
+      return '<tr class="'+l.cat+'"><td>'+pill(l.cat)+(l.detalhe?'<div class="sub">'+esc(l.detalhe)+'</div>':'')+'</td>'+
+        '<td><div class="name">'+esc(l.motorista)+'</div><div class="sub mono">Mat. '+esc(l.matricula)+'</div></td>'+
+        '<td><div>'+esc(l.linha)+'</div><div class="sub">'+esc(l.itinerario)+' · '+esc(l.sentido)+'</div></td>'+
+        '<td class="mono">'+esc(l.frota||'—')+'</td>'+
+        '<td class="mono">'+esc(l.partida||'—')+'</td>'+
+        '<td class="mono">'+esc(l.chegada||'—')+'</td>'+
+        '<td class="mono">'+esc(l.teste||'—')+(l.validade?'<div class="sub">válido até '+esc(l.validade)+'</div>':'')+'</td></tr>';
+    }).join('')+'</tbody></table>';
+  var na=D2.linhas.filter(function(l){return l.cat==='NAO_AVALIADO'}).length;
+  var notas=[];
+  if(na) notas.push(na+' viagem(ns) ainda sem avaliação de teste');
+  if(D2.semMotorista) notas.push(D2.semMotorista+' viagem(ns) sem motorista identificado no ICS');
+  document.getElementById('nota2').textContent=notas.join(' · ');
+}
+
+carregar1();
+setInterval(tique,1000);
+setInterval(function(){ if(document.getElementById('v-dia').style.display!=='none') carregar2(); },120000);
+</script>
+</body>
+</html>
