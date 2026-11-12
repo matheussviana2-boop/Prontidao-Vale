@@ -79,7 +79,8 @@ input[type=search]{width:220px}
 .c .ts{margin-top:auto;display:grid;grid-template-columns:auto 1px minmax(0,1fr) 1px minmax(0,1fr);gap:7px;align-items:center;background:#fff;border-radius:7px;padding:3px 8px}
 .c .ts i{background:#d5e0df;align-self:stretch}
 .c .ts small{display:block;font:600 10px/1.2 Inter,sans-serif;color:#2b4443;text-transform:uppercase;letter-spacing:.03em}
-.c .ts small em{font-style:normal;font-weight:800;color:var(--k);display:block}
+.c .ts .dt{display:block;font:700 11px/1.2 Inter,sans-serif;color:#2b4443}
+.c .ts .dt.old{color:var(--k);font-weight:800}
 .c .ts b{display:block;font:800 12.5px/1.25 Inter,sans-serif;color:#0b1f1f;font-variant-numeric:tabular-nums;white-space:nowrap}
 .c .ts div{min-width:0}
 .c .ts .car{display:inline-block;white-space:nowrap;vertical-align:top;font:800 12px/1.25 Inter,sans-serif;background:#fff;border:1.5px solid var(--chip);border-radius:999px;padding:0 7px;margin-top:1px}
@@ -235,8 +236,9 @@ var ICO={
   al:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.01"/></svg>',
   rel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'};
 /* data só aparece no rótulo quando não é hoje (ex.: VALIDADE 11/11), a hora fica sempre grande */
-function dh(rot,x){if(!x)return '<div><small>'+rot+'</small><b>—</b></div>';var c=hd(x),dt=c.length>5?String(x).slice(0,5):'';
-  return '<div><small>'+rot+(dt?' <em>'+dt+'</em>':'')+'</small><b>'+esc(String(x).slice(-5))+'</b></div>';}
+/* data sempre visível (em destaque na cor da situação quando não é de hoje) + hora grande */
+function dh(rot,x){if(!x)return '<div><small>'+rot+'</small><b>—</b></div>';var hoje=hd(x).length<=5;
+  return '<div><small>'+rot+'</small><span class="dt'+(hoje?'':' old')+'">'+esc(String(x).slice(0,5))+'</span><b>'+esc(String(x).slice(-5))+'</b></div>';}
 function card(l){
   var s=situacao(l), v='';
   if(s==='INAPTO') v='não liberado';
