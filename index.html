@@ -181,7 +181,7 @@ var API=(function(){
 </div>
 
 <script>
-var ORD={INAPTO:0,VENCIDO:1,SEM_TESTE:2,VENCENDO:3,OK:4};
+var ORD={SEM_TESTE:0,VENCIDO:1,INAPTO:2,VENCENDO:3,OK:4};   // ordem de criticidade
 var LAB={INAPTO:'Inapto',VENCIDO:'Teste vencido',SEM_TESTE:'Sem teste',VENCENDO:'Vence ≤ 2 h',OK:'Teste OK',NAO_AVALIADO:'Não avaliado'};
 var K={INAPTO:['var(--red)','var(--red-bg)'],VENCIDO:['var(--red)','var(--red-bg)'],SEM_TESTE:['var(--orange)','var(--orange-bg)'],VENCENDO:['var(--amber)','var(--amber-bg)'],OK:['var(--green)','var(--green-bg)'],NAO_AVALIADO:['var(--gray)','var(--gray-bg)']};
 var SEG=30, D1=null, D2=null, rec1=0, F1='TODOS', F2='', resta=SEG, ABA='agora';
@@ -241,10 +241,10 @@ function card(l){
     '<div class="t"><span class="lb">'+rotulo(l)+'</span><b>'+v+'</b></div>'+
   '</div>';
 }
-var FILTROS=[['TODOS','Logados','var(--brand)'],['SALA','Check-in','var(--brand)'],['MOV','Em movimento','var(--brand)'],['INAPTO','Inapto','var(--red)'],['VENCIDO','Teste vencido','var(--red)'],['SEM_TESTE','Sem teste','var(--orange)'],['VENCENDO','Vence ≤ 2 h','var(--amber)']];
+var FILTROS=[['TODOS','Logados','var(--brand)'],['MOV','Em movimento','var(--brand)'],['SEM_TESTE','Sem teste','var(--orange)'],['VENCIDO','Teste vencido','var(--red)'],['INAPTO','Inapto','var(--red)'],['VENCENDO','Vence ≤ 2 h','var(--amber)']];
 function filtrar(f){F1=(F1===f?'TODOS':f);if(ABA!=='agora')aba('agora');else tela1();}
 function passa(l,f){return f==='TODOS'||(f==='SALA'?l.tipo==='SALA':f==='MOV'?l.veloc>0:situacao(l)===f);}
-function cnt(D,f){return D.filter(function(l){return f==='TODOS'?l.tipo!=='SALA':passa(l,f);}).length;}
+function cnt(D,f){return D.filter(function(l){return passa(l,f);}).length;}
 function ordenar(a,b){
   return ORD[situacao(a)]-ORD[situacao(b)]||(b.veloc>0?1:0)-(a.veloc>0?1:0)||(b.ign?1:0)-(a.ign?1:0)||
     ((vence(a)==null?1e9:vence(a))-(vence(b)==null?1e9:vence(b)))||String(a.nome||a.motoristaICS).localeCompare(String(b.nome||b.motoristaICS));
@@ -262,14 +262,15 @@ function tela1(){
     return passa(l,F1)&&acha(q,(l.nome||'')+' '+l.motoristaICS+' '+l.matricula+' '+l.linha+' '+l.frota+' '+l.chapa);
   }).sort(ordenar);
   $('res1').textContent=q?vis.length+' encontrado(s)':'';
-  var bases=[];D.forEach(function(l){if(l.tipo==='SALA')return;var x=l.base||'Sem base';if(bases.indexOf(x)<0)bases.push(x);});bases.sort();
-  var S=vis.filter(function(l){return l.tipo==='SALA';}).sort(function(a,b){return ORD[situacao(a)]-ORD[situacao(b)]||String(b.checkin).localeCompare(String(a.checkin));});
-  var secSala=!S.length?'':'<section class="sec"><h3>Check-in nas salas de teste <small>'+S.length+' motorista(s) que bateram o cartão e ainda não logaram num carro</small></h3><div class="grid">'+S.map(card).join('')+'</div></section>';
+  var bases=[];D.forEach(function(l){var x=l.base||'Sem base';if(bases.indexOf(x)<0)bases.push(x);});bases.sort();
+  // todos os que precisam de atenção sobem para o topo (de todas as bases), na ordem de criticidade
+  var AT=vis.filter(function(l){return situacao(l)!=='OK';});
+  var secSala=!AT.length?'':'<section class="sec"><h3 style="color:var(--red)">Atenção <small>'+AT.length+' motorista(s) · sem teste, teste vencido, inapto e vencendo em até 2 h</small></h3><div class="grid">'+AT.map(card).join('')+'</div></section>';
   $('bases').innerHTML=!D.length?'<div class="empty">Nenhum motorista logado.</div>':secSala+bases.map(function(b){
-    var all=D.filter(function(l){return l.tipo!=='SALA'&&(l.base||'Sem base')===b;}), L=vis.filter(function(l){return l.tipo!=='SALA'&&(l.base||'Sem base')===b;});
+    var all=D.filter(function(l){return (l.base||'Sem base')===b;}), L=vis.filter(function(l){return (l.base||'Sem base')===b&&situacao(l)==='OK';});
     if(!L.length) return '';
     var at=all.filter(function(l){return situacao(l)!=='OK';}).length;
-    return '<section class="sec"><h3>'+esc(b)+' <small>'+all.length+' logados · <span style="color:'+(at?'var(--red)':'var(--green)')+';font-weight:700">'+at+' com atenção</span></small></h3>'+
+    return '<section class="sec"><h3>'+esc(b)+' <small>'+all.length+' logados · <span style="color:'+(at?'var(--red)':'var(--green)')+';font-weight:700">'+at+' com atenção (no topo)</span></small></h3>'+
       '<div class="grid">'+L.map(card).join('')+'</div></section>';
   }).join('')||'<div class="empty">Ninguém neste filtro agora.</div>';
   var ni=D1.linhas.filter(function(l){return l.cat==='NAO_IDENTIFICADO';});
