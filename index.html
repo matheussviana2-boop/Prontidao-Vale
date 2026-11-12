@@ -241,6 +241,7 @@ function card(l){
   var s=situacao(l), v='';
   if(s==='INAPTO') v='não liberado';
   else if((s==='OK'||s==='VENCENDO'||s==='LIBERADO')&&l.venceMin!=null) v=ICO.rel+'vence '+dur(vence(l));
+  else if(l.testeHoje) v='teste de hoje';
   var ic=(s==='OK'||s==='VENCENDO'||s==='LIBERADO')?ICO.ok:s==='INAPTO'?ICO.x:ICO.al;
   return '<div class="c '+s+(critico(l)?' crit':'')+'"'+(l.liberadoManual&&l.detalhe?' title="'+esc(l.detalhe)+'"':'')+'><div class="bd">'+
     '<div class="nm">'+ICO.pes+'<i></i><span>'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</span></div>'+
