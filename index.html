@@ -72,7 +72,7 @@ input[type=search]{width:220px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
 .c{border-radius:7px;padding:5px 8px 6px;border:1px solid var(--tl);background:var(--tb);display:flex;flex-direction:column;gap:1px;min-width:0}
 .c .a{display:flex;align-items:flex-start;gap:6px;min-width:0}
-.c .nm{font-weight:800;font-size:12.5px;flex:1;min-width:0;line-height:1.25;color:#0b1f1f;overflow-wrap:anywhere}
+.c .nm{font-weight:800;font-size:12.5px;min-width:0;line-height:1.25;color:#0b1f1f;overflow-wrap:anywhere}
 .c .vel{display:flex;align-items:center;gap:3px;font:700 11.5px "JetBrains Mono",monospace;white-space:nowrap;margin-top:1px}
 .c .vel.on{color:#0b1f1f} .c .vel.off{color:#4f6665}
 .c .ign{display:inline-flex}
@@ -100,6 +100,9 @@ input[type=search]{width:220px}
 
 /* ---------- viagens finalizadas ---------- */
 .stats{display:flex;gap:6px;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;margin-right:6px;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:5px 14px;font:700 12px Inter,sans-serif;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--brand);color:#fff}
 .bar2{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:8px 0}
 .busca{position:relative;display:flex;align-items:center}
 .busca svg{position:absolute;left:10px;width:15px;height:15px;color:var(--muted);pointer-events:none}
@@ -142,7 +145,7 @@ var API=(function(){
   }
   return {
     agora:function(){return buscar().then(function(j){if(!j.agora) throw new Error('Ainda não chegaram dados do coletor.');return j.agora;});},
-    dia:function(){return buscar().then(function(j){return j.dia;});},
+    dia:function(qual){return buscar().then(function(j){return qual==='ontem'?(j.ontem||{linhas:[],semMotorista:0}):j.dia;});},
     atraso:function(){return lag==null?(em?999:null):Math.round((lag+Date.now()-lagEm)/60000);}
   };
 })();
@@ -177,7 +180,7 @@ var API=(function(){
 var ORD={INAPTO:0,VENCIDO:1,SEM_TESTE:2,VENCENDO:3,OK:4};
 var LAB={INAPTO:'Inapto',VENCIDO:'Teste vencido',SEM_TESTE:'Sem teste',VENCENDO:'Vence ≤ 2 h',OK:'Teste OK',NAO_AVALIADO:'Não avaliado'};
 var K={INAPTO:['var(--red)','var(--red-bg)'],VENCIDO:['var(--red)','var(--red-bg)'],SEM_TESTE:['var(--orange)','var(--orange-bg)'],VENCENDO:['var(--amber)','var(--amber-bg)'],OK:['var(--green)','var(--green-bg)'],NAO_AVALIADO:['var(--gray)','var(--gray-bg)']};
-var SEG=120, D1=null, D2=null, rec1=0, F1='TODOS', F2='', resta=SEG, ABA='agora';
+var SEG=30, D1=null, D2=null, rec1=0, F1='TODOS', F2='', resta=SEG, ABA='agora';
 
 function $(id){return document.getElementById(id);}
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
@@ -229,19 +232,16 @@ function card(l){
   else if((s==='OK'||s==='VENCENDO')&&l.venceMin!=null) v='vence '+dur(vence(l));
   var cls=s;
   return '<div class="c '+cls+(critico(l)?' crit':'')+'">'+
-    '<div class="a"><span class="nm">'+esc(l.nome||l.motoristaICS)+'</span>'+
-      '<span class="ign '+(l.ign?'on':'off')+'" title="Ignição '+(l.ign?'ligada':'desligada')+'">'+IGN+'</span>'+
-      '<span class="vel '+(l.veloc>0?'on':'off')+'">'+(l.veloc||0)+' km/h</span></div>'+
-    '<div class="b">Matrícula <b>'+esc(l.matricula)+'</b></div>'+
-    '<div class="ln">Carro <b>'+esc(l.frota||'—')+'</b>'+(l.linha?' · '+esc(l.linha):'')+'</div>'+
-    '<div class="tx'+(l.transMin>=15?' atr':'')+'"'+(l.transMin>=15?' title="Sem transmitir há '+dur(l.transMin)+'"':'')+'>Transmissão <b>'+esc(l.transmissao||'—')+'</b>'+'</div>'+
+    '<div class="nm">'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</div>'+
+    (l.tipo==='SALA'?'<div class="ln">Carro <b>'+esc(l.sala)+'</b> · check-in <b>'+esc(hd(l.checkin))+'</b></div>':'<div class="ln">Carro <b>'+esc(l.frota||'—')+'</b></div>')+
     '<div class="t"><span class="lb">'+rotulo(l)+'</span><b>'+v+'</b></div>'+
     (l.teste?'<div class="h">Teste '+esc(cls==='OK'||cls==='VENCENDO'?hd(l.teste):l.teste)+' → '+esc(cls==='OK'||cls==='VENCENDO'?hd(l.validade):(l.validade||'—'))+'</div>':'')+
   '</div>';
 }
-var FILTROS=[['TODOS','Logados','var(--brand)'],['MOV','Em movimento','var(--brand)'],['INAPTO','Inapto','var(--red)'],['VENCIDO','Teste vencido','var(--red)'],['SEM_TESTE','Sem teste','var(--orange)'],['VENCENDO','Vence ≤ 2 h','var(--amber)']];
+var FILTROS=[['TODOS','Logados','var(--brand)'],['SALA','Check-in','var(--brand)'],['MOV','Em movimento','var(--brand)'],['INAPTO','Inapto','var(--red)'],['VENCIDO','Teste vencido','var(--red)'],['SEM_TESTE','Sem teste','var(--orange)'],['VENCENDO','Vence ≤ 2 h','var(--amber)']];
 function filtrar(f){F1=(F1===f?'TODOS':f);if(ABA!=='agora')aba('agora');else tela1();}
-function passa(l,f){return f==='TODOS'||(f==='MOV'?l.veloc>0:situacao(l)===f);}
+function passa(l,f){return f==='TODOS'||(f==='SALA'?l.tipo==='SALA':f==='MOV'?l.veloc>0:situacao(l)===f);}
+function cnt(D,f){return D.filter(function(l){return f==='TODOS'?l.tipo!=='SALA':passa(l,f);}).length;}
 function ordenar(a,b){
   return ORD[situacao(a)]-ORD[situacao(b)]||(b.veloc>0?1:0)-(a.veloc>0?1:0)||(b.ign?1:0)-(a.ign?1:0)||
     ((vence(a)==null?1e9:vence(a))-(vence(b)==null?1e9:vence(b)))||String(a.nome||a.motoristaICS).localeCompare(String(b.nome||b.motoristaICS));
@@ -252,17 +252,18 @@ function tela1(){
   preencherBases($('base1'),todas);
   var base=$('base1').value, q=$('q1').value.trim();
   var D=todas.filter(function(l){return !base||l.base===base;});
-  var n=function(f){return D.filter(function(l){return passa(l,f);}).length;};
-  $('pills').innerHTML=FILTROS.map(function(x){return '<button class="pill" aria-pressed="'+(F1===x[0])+'" style="--c:'+x[2]+'" onclick="filtrar(\''+x[0]+'\')"><i></i><b>'+n(x[0])+'</b>'+x[1]+'</button>';}).join('');
+  $('pills').innerHTML=FILTROS.map(function(x){return '<button class="pill" aria-pressed="'+(F1===x[0])+'" style="--c:'+x[2]+'" onclick="filtrar(\''+x[0]+'\')"><i></i><b>'+cnt(D,x[0])+'</b>'+x[1]+'</button>';}).join('');
   var fx=FILTROS.filter(function(x){return x[0]===F1;})[0];
   $('filtroInfo').innerHTML=ABA!=='agora'?'':F1==='TODOS'?'':'Mostrando só: <b>'+fx[1]+'</b> · <a href="#" onclick="filtrar(\'TODOS\');return false">ver todos</a>';
   var vis=D.filter(function(l){
     return passa(l,F1)&&acha(q,(l.nome||'')+' '+l.motoristaICS+' '+l.matricula+' '+l.linha+' '+l.frota+' '+l.chapa);
   }).sort(ordenar);
   $('res1').textContent=q?vis.length+' encontrado(s)':'';
-  var bases=[];D.forEach(function(l){var x=l.base||'Sem base';if(bases.indexOf(x)<0)bases.push(x);});bases.sort();
-  $('bases').innerHTML=!D.length?'<div class="empty">Nenhum motorista logado.</div>':bases.map(function(b){
-    var all=D.filter(function(l){return (l.base||'Sem base')===b;}), L=vis.filter(function(l){return (l.base||'Sem base')===b;});
+  var bases=[];D.forEach(function(l){if(l.tipo==='SALA')return;var x=l.base||'Sem base';if(bases.indexOf(x)<0)bases.push(x);});bases.sort();
+  var S=vis.filter(function(l){return l.tipo==='SALA';}).sort(function(a,b){return ORD[situacao(a)]-ORD[situacao(b)]||String(b.checkin).localeCompare(String(a.checkin));});
+  var secSala=!S.length?'':'<section class="sec"><h3>Check-in nas salas de teste <small>'+S.length+' motorista(s) que bateram o cartão e ainda não logaram num carro</small></h3><div class="grid">'+S.map(card).join('')+'</div></section>';
+  $('bases').innerHTML=!D.length?'<div class="empty">Nenhum motorista logado.</div>':secSala+bases.map(function(b){
+    var all=D.filter(function(l){return l.tipo!=='SALA'&&(l.base||'Sem base')===b;}), L=vis.filter(function(l){return l.tipo!=='SALA'&&(l.base||'Sem base')===b;});
     if(!L.length) return '';
     var at=all.filter(function(l){return situacao(l)!=='OK';}).length;
     return '<section class="sec"><h3>'+esc(b)+' <small>'+all.length+' logados · <span style="color:'+(at?'var(--red)':'var(--green)')+';font-weight:700">'+at+' com atenção</span></small></h3>'+
@@ -274,21 +275,23 @@ function tela1(){
 $('q1').oninput=tela1; $('q2').oninput=tela2; $('base1').onchange=function(){tela1();if(ABA==='dia')tela2();};
 
 /* ---------- Tela 2: viagens finalizadas ---------- */
-function carregar2(){API.dia().then(function(r){D2=r;tela2();}).catch(erro);}
+var DIA_SEL='hoje';
+function carregar2(){API.dia(DIA_SEL).then(function(r){D2=r;tela2();}).catch(erro);}
+function escolherDia(d){if(d===DIA_SEL)return;DIA_SEL=d;D2=null;$('g2').innerHTML='<div class="empty">Carregando viagens…</div>';carregar2();}
 function tela2(){
   if(!D2) return;
   var base=$('base1').value, q=$('q2').value.trim();
   var D=D2.linhas.filter(function(l){return !base||l.base===base;});
   var n=function(c){return D.filter(function(l){return catV(l)===c;}).length;};
   var S=[['','Viagens finalizadas',D.length,'var(--brand)'],['OK','Teste OK',n('OK'),'var(--green)'],['VENCIDO','Teste vencido',n('VENCIDO'),'var(--red)'],['SEM_TESTE','Sem teste',n('SEM_TESTE'),'var(--orange)'],['INAPTO','Inapto',n('INAPTO'),'var(--red)']];
-  $('stats2').innerHTML=S.map(function(x){return '<button class="pill" data-c="'+x[0]+'" aria-pressed="'+(F2===x[0])+'" style="--c:'+x[3]+'"><i></i><b>'+x[2]+'</b>'+x[1]+'</button>';}).join('')+
+  $('stats2').innerHTML='<span class="seg"><button class="'+(DIA_SEL==='hoje'?'on':'')+'" onclick="escolherDia(\'hoje\')">Hoje</button><button class="'+(DIA_SEL==='ontem'?'on':'')+'" onclick="escolherDia(\'ontem\')">Ontem</button></span>'+S.map(function(x){return '<button class="pill" data-c="'+x[0]+'" aria-pressed="'+(F2===x[0])+'" style="--c:'+x[3]+'"><i></i><b>'+x[2]+'</b>'+x[1]+'</button>';}).join('')+
     '<span class="info" style="align-self:center;margin-left:8px">'+(D2.ultimaColeta?'Atualizado '+esc(D2.ultimaColeta):'')+'</span>';
-  $('stats2').querySelectorAll('button').forEach(function(b){b.onclick=function(){F2=(F2===b.dataset.c?'':b.dataset.c);tela2();};});
+  $('stats2').querySelectorAll('button.pill').forEach(function(b){b.onclick=function(){F2=(F2===b.dataset.c?'':b.dataset.c);tela2();};});
   var rows=D.filter(function(l){
     if(F2&&catV(l)!==F2) return false;
     return acha(q,l.motorista+' '+l.matricula+' '+l.linha+' '+l.itinerario+' '+l.frota);
   }).sort(function(a,b){var x=ORD[catV(a)],y=ORD[catV(b)];return (x==null?9:x)-(y==null?9:y);});
-  $('g2').innerHTML=!rows.length?'<div class="empty">'+(D2.linhas.length?'Nenhuma viagem com esse filtro.':'Nenhuma viagem finalizada gravada hoje.')+'</div>':
+  $('g2').innerHTML=!rows.length?'<div class="empty">'+(D2.linhas.length?'Nenhuma viagem com esse filtro.':'Nenhuma viagem finalizada gravada '+(DIA_SEL==='ontem'?'ontem.':'hoje.'))+'</div>':
     '<table><thead><tr><th>Teste</th><th>Motorista</th><th>Viagem</th><th>Veículo</th><th>Partida</th><th>Chegada</th><th>Teste do motorista</th></tr></thead><tbody>'+
     rows.map(function(l){
       var cv=catV(l), k=K[cv]||K.NAO_AVALIADO;
