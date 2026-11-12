@@ -80,6 +80,9 @@ input[type=search]{width:220px}
 .c .ign.on{color:#067a4c} .c .ign.off{color:#7c9291}
 .c .b{font-size:11.5px;color:#2b4443}
 .c .b b{font:700 11.5px "JetBrains Mono",monospace;color:#0b1f1f}
+.c .car{display:flex;align-items:center;gap:6px;margin:2px 0 1px}
+.c .car span{font:600 11.5px Inter,sans-serif;color:#2b4443}
+.c .car b{font:800 13px Inter,sans-serif;color:#fff;background:#0b1f1f;border-radius:4px;padding:1px 7px;letter-spacing:.02em}
 .c .ln{font-size:11.5px;color:#1c3534;overflow-wrap:anywhere}
 .c .ln b{font:700 11.5px "JetBrains Mono",monospace;color:#0b1f1f}
 .c .ts{margin-top:auto;padding-top:4px;border-top:1px dashed var(--tl);display:grid;grid-template-columns:auto 1fr;gap:1px 8px;align-items:baseline}
@@ -237,6 +240,7 @@ function card(l){
   var cls=s;
   return '<div class="c '+cls+(critico(l)?' crit':'')+'">'+
     '<div class="nm">'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</div>'+
+    '<div class="car"><span>Carro</span><b>'+esc(l.frota||'—')+'</b></div>'+
     '<div class="ts">'+(l.teste?'<span>Realizado</span><b>'+esc(l.teste)+'</b><span>Validade</span><b>'+esc(l.validade||'—')+'</b>':'<div class="nada">Nenhum teste registrado</div>')+'</div>'+
     '<div class="t"><span class="lb">'+rotulo(l)+'</span><b>'+v+'</b></div>'+
   '</div>';
