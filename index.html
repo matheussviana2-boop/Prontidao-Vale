@@ -82,9 +82,13 @@ input[type=search]{width:220px}
 .c .b b{font:700 11.5px "JetBrains Mono",monospace;color:#0b1f1f}
 .c .ln{font-size:11.5px;color:#1c3534;overflow-wrap:anywhere}
 .c .ln b{font:700 11.5px "JetBrains Mono",monospace;color:#0b1f1f}
-.c .t{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-top:auto;padding-top:3px;border-top:1px dashed var(--tl)}
-.c .t .lb{font:800 11px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--k)}
-.c .t b{font:700 12px "JetBrains Mono",monospace;color:var(--k);white-space:nowrap}
+.c .ts{margin-top:auto;padding-top:4px;border-top:1px dashed var(--tl);display:grid;grid-template-columns:auto 1fr;gap:1px 8px;align-items:baseline}
+.c .ts span{font:600 11.5px Inter,sans-serif;color:#2b4443}
+.c .ts b{font:700 13px Inter,sans-serif;color:#0b1f1f;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.c .ts .nada{grid-column:1/-1;font:700 12.5px Inter,sans-serif;color:#2b4443}
+.c .t{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-top:4px}
+.c .t .lb{font:800 13px Inter,sans-serif;letter-spacing:.03em;text-transform:uppercase;color:var(--k)}
+.c .t b{font:800 13px Inter,sans-serif;color:var(--k);white-space:nowrap;font-variant-numeric:tabular-nums}
 .c .h{font-size:11px;color:#2b4443}
 .c .tx{font-size:11px;color:#2b4443}
 .c .tx b{font:700 11px "JetBrains Mono",monospace;color:#0b1f1f}
@@ -234,8 +238,8 @@ function card(l){
   return '<div class="c '+cls+(critico(l)?' crit':'')+'">'+
     '<div class="nm">'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</div>'+
     (l.tipo==='SALA'?'<div class="ln">Carro <b>'+esc(l.sala)+'</b> · check-in <b>'+esc(hd(l.checkin))+'</b></div>':'<div class="ln">Carro <b>'+esc(l.frota||'—')+'</b></div>')+
+    '<div class="ts">'+(l.teste?'<span>Realizado</span><b>'+esc(l.teste)+'</b><span>Validade</span><b>'+esc(l.validade||'—')+'</b>':'<div class="nada">Nenhum teste registrado</div>')+'</div>'+
     '<div class="t"><span class="lb">'+rotulo(l)+'</span><b>'+v+'</b></div>'+
-    (l.teste?'<div class="h">Teste '+esc(cls==='OK'||cls==='VENCENDO'?hd(l.teste):l.teste)+' → '+esc(cls==='OK'||cls==='VENCENDO'?hd(l.validade):(l.validade||'—'))+'</div>':'')+
   '</div>';
 }
 var FILTROS=[['TODOS','Logados','var(--brand)'],['SALA','Check-in','var(--brand)'],['MOV','Em movimento','var(--brand)'],['INAPTO','Inapto','var(--red)'],['VENCIDO','Teste vencido','var(--red)'],['SEM_TESTE','Sem teste','var(--orange)'],['VENCENDO','Vence ≤ 2 h','var(--amber)']];
