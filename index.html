@@ -73,25 +73,26 @@ input[type=search]{width:220px}
 .c{position:relative;background:var(--tb);border:1.5px solid var(--tl);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
 .c .bd{padding:6px 9px 6px;display:flex;flex-direction:column;gap:5px;flex:1}
 .c .nm{display:flex;align-items:center;gap:7px;font:800 12.5px/1.2 Inter,sans-serif;color:#0b1f1f;text-transform:uppercase}
-.c .nm svg{width:18px;height:18px;flex:none;color:var(--k)}
+.c .nm svg{width:18px;height:18px;flex:none;color:var(--ic)}
 .c .nm i{width:1.5px;align-self:stretch;background:var(--tl);flex:none}
 .c .nm span{min-width:0;overflow-wrap:anywhere}
-.c .ts{margin-top:auto;display:grid;grid-template-columns:auto 1px minmax(0,1fr) 1px minmax(0,1fr);gap:7px;align-items:center;background:rgba(255,255,255,.75);border-radius:7px;padding:3px 8px}
+.c .ts{margin-top:auto;display:grid;grid-template-columns:auto 1px minmax(0,1fr) 1px minmax(0,1fr);gap:7px;align-items:center;background:#fff;border-radius:7px;padding:3px 8px}
 .c .ts i{background:#d5e0df;align-self:stretch}
 .c .ts small{display:block;font:600 10px/1.2 Inter,sans-serif;color:#2b4443;text-transform:uppercase;letter-spacing:.03em}
 .c .ts small em{font-style:normal;font-weight:800;color:var(--k);display:block}
 .c .ts b{display:block;font:800 12.5px/1.25 Inter,sans-serif;color:#0b1f1f;font-variant-numeric:tabular-nums;white-space:nowrap}
 .c .ts div{min-width:0}
-.c .ts .car{display:inline-block;white-space:nowrap;vertical-align:top;font:800 12px/1.25 Inter,sans-serif;background:#fff;border:1.5px solid var(--k);border-radius:999px;padding:0 7px;margin-top:1px}
-.c .st{background:var(--k);color:#fff;display:flex;align-items:center;gap:7px;padding:3px 9px}
+.c .ts .car{display:inline-block;white-space:nowrap;vertical-align:top;font:800 12px/1.25 Inter,sans-serif;background:#fff;border:1.5px solid var(--chip);border-radius:999px;padding:0 7px;margin-top:1px}
+.c .st{background:var(--fb);color:var(--fc);display:flex;align-items:center;gap:7px;padding:3px 9px}
 .c .st svg{width:15px;height:15px;flex:none}
 .c .st .lb{font:800 12.5px Inter,sans-serif;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
-.c .st .sp{width:1px;align-self:stretch;background:rgba(255,255,255,.4);margin:0 2px}
+.c .st .sp{width:1px;align-self:stretch;background:var(--tl);margin:0 2px}
 .c .st .v{display:flex;align-items:center;gap:4px;font:700 12.5px Inter,sans-serif;white-space:nowrap;margin-left:auto}
 .c .st .v svg{width:14px;height:14px}
-.c.INAPTO,.c.VENCIDO,.c.SEM_TESTE{--tb:#fde4e1;--tl:#ef9f97;--k:#b42318}
-.c.VENCENDO{--tb:#fdf3d2;--tl:#e3c76c;--k:#9a6400}
-.c.OK{--tb:#e2f4ea;--tl:#9fd5b8;--k:#0f7a45}
+.c.INAPTO,.c.VENCIDO,.c.SEM_TESTE{--tb:#fff6f5;--tl:#f4c7c2;--k:#b42318;--ic:#c0392b;--fb:#fbe1de;--fc:#a8190f;--chip:#e9a49c}
+.c.VENCENDO{--tb:#fffbef;--tl:#efdca3;--k:#9a6400;--ic:#a87300;--fb:#fbf0cc;--fc:#7a5200;--chip:#e0c26c}
+.c.LIBERADO{--tb:#f8f5ff;--tl:#d6cbf3;--k:#6d3fc0;--ic:#7c4dcc;--fb:#ece5fc;--fc:#5b2fb0;--chip:#c2b0ee}
+.c.OK{--tb:#f4fbf7;--tl:#c4e6d3;--k:#0f7a45;--ic:#1e8a55;--fb:#dcf1e5;--fc:#0d6a3c;--chip:#9fd5b8}
 .c.crit{border:2.5px solid var(--red);animation:alerta 1.4s infinite}
 @keyframes alerta{0%,100%{box-shadow:0 0 0 0 rgba(217,45,32,.45)}50%{box-shadow:0 0 0 4px rgba(217,45,32,0)}}
 .empty{padding:28px;text-align:center;color:var(--muted)}
@@ -176,9 +177,9 @@ var API=(function(){
 </div>
 
 <script>
-var ORD={SEM_TESTE:0,VENCIDO:1,INAPTO:2,VENCENDO:3,OK:4};   // ordem de criticidade
-var LAB={INAPTO:'Inapto',VENCIDO:'Teste vencido',SEM_TESTE:'Sem teste',VENCENDO:'Vence ≤ 2 h',OK:'Teste OK',NAO_AVALIADO:'Não avaliado'};
-var K={INAPTO:['var(--red)','var(--red-bg)'],VENCIDO:['var(--red)','var(--red-bg)'],SEM_TESTE:['var(--orange)','var(--orange-bg)'],VENCENDO:['var(--amber)','var(--amber-bg)'],OK:['var(--green)','var(--green-bg)'],NAO_AVALIADO:['var(--gray)','var(--gray-bg)']};
+var ORD={SEM_TESTE:0,VENCIDO:1,INAPTO:2,VENCENDO:3,LIBERADO:4,OK:5};   // ordem de criticidade
+var LAB={INAPTO:'Inapto',VENCIDO:'Teste vencido',SEM_TESTE:'Sem teste',VENCENDO:'Vence ≤ 2 h',OK:'Teste OK',LIBERADO:'Liberado manual',NAO_AVALIADO:'Não avaliado'};
+var K={INAPTO:['var(--red)','var(--red-bg)'],VENCIDO:['var(--red)','var(--red-bg)'],SEM_TESTE:['var(--orange)','var(--orange-bg)'],VENCENDO:['var(--amber)','var(--amber-bg)'],OK:['var(--green)','var(--green-bg)'],LIBERADO:['#6d3fc0','#efe8fd'],NAO_AVALIADO:['var(--gray)','var(--gray-bg)']};
 var SEG=30, D1=null, D2=null, rec1=0, F1='TODOS', F2='', resta=SEG, ABA='agora';
 
 function $(id){return document.getElementById(id);}
@@ -211,7 +212,7 @@ function carregar1(){
 }
 function vence(l){return l.venceMin==null?null:l.venceMin-(Date.now()-rec1)/60000;}
 /* Sem teste = nenhum teste registrado no Prontos; Teste vencido = fez teste, mas a validade já passou */
-function catV(l){return l.cat==='SEM_TESTE'&&/vencid/i.test(l.detalhe||'')?'VENCIDO':l.cat;}
+function catV(l){return l.cat==='SEM_TESTE'&&/vencid/i.test(l.detalhe||'')?'VENCIDO':l.cat==='OK'&&l.liberadoManual?'LIBERADO':l.cat;}
 function situacao(l){return l.cat==='OK'&&l.venceMin!=null&&vence(l)<=120?'VENCENDO':catV(l);}
 function critico(l){var s=situacao(l);return (s==='INAPTO'||s==='VENCIDO'||s==='SEM_TESTE')&&l.veloc>0;}
 var IGN='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 1.8v6"/><path d="M4.3 4.3a5.3 5.3 0 1 0 7.4 0"/></svg>';
@@ -223,6 +224,7 @@ function rotulo(l){
   if(s==='INAPTO') return 'Inapto';
   if(s==='VENCIDO') return 'Teste vencido';
   if(s==='SEM_TESTE') return 'Sem teste';
+  if(l.liberadoManual) return 'Liberado';
   return 'Teste OK';
 }
 var ICO={
@@ -238,9 +240,9 @@ function dh(rot,x){if(!x)return '<div><small>'+rot+'</small><b>—</b></div>';va
 function card(l){
   var s=situacao(l), v='';
   if(s==='INAPTO') v='não liberado';
-  else if((s==='OK'||s==='VENCENDO')&&l.venceMin!=null) v=ICO.rel+'vence '+dur(vence(l));
-  var ic=(s==='OK'||s==='VENCENDO')?ICO.ok:s==='INAPTO'?ICO.x:ICO.al;
-  return '<div class="c '+s+(critico(l)?' crit':'')+'"><div class="bd">'+
+  else if((s==='OK'||s==='VENCENDO'||s==='LIBERADO')&&l.venceMin!=null) v=ICO.rel+'vence '+dur(vence(l));
+  var ic=(s==='OK'||s==='VENCENDO'||s==='LIBERADO')?ICO.ok:s==='INAPTO'?ICO.x:ICO.al;
+  return '<div class="c '+s+(critico(l)?' crit':'')+'"'+(l.liberadoManual&&l.detalhe?' title="'+esc(l.detalhe)+'"':'')+'><div class="bd">'+
     '<div class="nm">'+ICO.pes+'<i></i><span>'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</span></div>'+
     '<div class="ts"><div><small>Carro</small><b class="car" title="'+esc(l.frota||'')+'">'+esc(l.frota||'—')+'</b></div>'+
       (l.teste?'<i></i>'+dh('Teste',l.teste)+'<i></i>'+dh('Validade',l.validade)
@@ -248,7 +250,7 @@ function card(l){
     '</div><div class="st">'+ic+'<span class="lb">'+rotulo(l)+'</span>'+(v?'<span class="sp"></span><span class="v">'+v+'</span>':'')+'</div>'+
   '</div>';
 }
-var FILTROS=[['TODOS','Logados','var(--brand)'],['MOV','Em movimento','var(--brand)'],['SEM_TESTE','Sem teste','var(--red)'],['VENCIDO','Teste vencido','var(--red)'],['INAPTO','Inapto','var(--red)'],['VENCENDO','Vence ≤ 2 h','var(--amber)']];
+var FILTROS=[['TODOS','Logados','var(--brand)'],['MOV','Em movimento','var(--brand)'],['SEM_TESTE','Sem teste','var(--red)'],['VENCIDO','Teste vencido','var(--red)'],['INAPTO','Inapto','var(--red)'],['VENCENDO','Vence ≤ 2 h','var(--amber)'],['LIBERADO','Liberado manual','#7c4dcc']];
 function filtrar(f){F1=(F1===f?'TODOS':f);if(ABA!=='agora')aba('agora');else tela1();}
 function passa(l,f){return f==='TODOS'||(f==='SALA'?l.tipo==='SALA':f==='MOV'?l.veloc>0:situacao(l)===f);}
 function cnt(D,f){return D.filter(function(l){return passa(l,f);}).length;}
@@ -271,12 +273,12 @@ function tela1(){
   $('res1').textContent=q?vis.length+' encontrado(s)':'';
   var bases=[];D.forEach(function(l){var x=l.base||'Sem base';if(bases.indexOf(x)<0)bases.push(x);});bases.sort();
   // todos os que precisam de atenção sobem para o topo (de todas as bases), na ordem de criticidade
-  var AT=vis.filter(function(l){return situacao(l)!=='OK';});
+  var AT=vis.filter(function(l){var x=situacao(l);return x!=='OK'&&x!=='LIBERADO';});
   var secSala=!AT.length?'':'<section class="sec"><h3 style="color:var(--red)">Atenção <small>'+AT.length+' motorista(s) · sem teste, teste vencido, inapto e vencendo em até 2 h</small></h3><div class="grid">'+AT.map(card).join('')+'</div></section>';
   $('bases').innerHTML=!D.length?'<div class="empty">Nenhum motorista logado.</div>':secSala+bases.map(function(b){
-    var all=D.filter(function(l){return (l.base||'Sem base')===b;}), L=vis.filter(function(l){return (l.base||'Sem base')===b&&situacao(l)==='OK';});
+    var all=D.filter(function(l){return (l.base||'Sem base')===b;}), L=vis.filter(function(l){return (l.base||'Sem base')===b&&(situacao(l)==='OK'||situacao(l)==='LIBERADO');});
     if(!L.length) return '';
-    var at=all.filter(function(l){return situacao(l)!=='OK';}).length;
+    var at=all.filter(function(l){var x=situacao(l);return x!=='OK'&&x!=='LIBERADO';}).length;
     return '<section class="sec"><h3>'+esc(b)+' <small>'+all.length+' logados · <span style="color:'+(at?'var(--red)':'var(--green)')+';font-weight:700">'+at+' com atenção (no topo)</span></small></h3>'+
       '<div class="grid">'+L.map(card).join('')+'</div></section>';
   }).join('')||'<div class="empty">Ninguém neste filtro agora.</div>';
@@ -294,7 +296,7 @@ function tela2(){
   var base=$('base1').value, q=$('q2').value.trim();
   var D=D2.linhas.filter(function(l){return !base||l.base===base;});
   var n=function(c){return D.filter(function(l){return catV(l)===c;}).length;};
-  var S=[['','Viagens finalizadas',D.length,'var(--brand)'],['OK','Teste OK',n('OK'),'var(--green)'],['VENCIDO','Teste vencido',n('VENCIDO'),'var(--red)'],['SEM_TESTE','Sem teste',n('SEM_TESTE'),'var(--orange)'],['INAPTO','Inapto',n('INAPTO'),'var(--red)']];
+  var S=[['','Viagens finalizadas',D.length,'var(--brand)'],['OK','Teste OK',n('OK'),'var(--green)'],['LIBERADO','Liberado manual',n('LIBERADO'),'#7c4dcc'],['VENCIDO','Teste vencido',n('VENCIDO'),'var(--red)'],['SEM_TESTE','Sem teste',n('SEM_TESTE'),'var(--orange)'],['INAPTO','Inapto',n('INAPTO'),'var(--red)']];
   $('stats2').innerHTML='<span class="seg"><button class="'+(DIA_SEL==='hoje'?'on':'')+'" onclick="escolherDia(\'hoje\')">Hoje</button><button class="'+(DIA_SEL==='ontem'?'on':'')+'" onclick="escolherDia(\'ontem\')">Ontem</button></span>'+S.map(function(x){return '<button class="pill" data-c="'+x[0]+'" aria-pressed="'+(F2===x[0])+'" style="--c:'+x[3]+'"><i></i><b>'+x[2]+'</b>'+x[1]+'</button>';}).join('')+
     '<span class="info" style="align-self:center;margin-left:8px">'+(D2.ultimaColeta?'Atualizado '+esc(D2.ultimaColeta):'')+'</span>';
   $('stats2').querySelectorAll('button.pill').forEach(function(b){b.onclick=function(){F2=(F2===b.dataset.c?'':b.dataset.c);tela2();};});
