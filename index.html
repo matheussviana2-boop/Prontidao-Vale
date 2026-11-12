@@ -69,28 +69,26 @@ input[type=search]{width:220px}
 .sec h3{margin:0 0 5px;font:italic 800 14px "Exo 2",sans-serif;color:var(--brand-ink);display:flex;gap:10px;align-items:center;text-transform:uppercase;letter-spacing:.03em}
 .sec h3 small{font:600 11px Inter,sans-serif;color:var(--muted);text-transform:none;letter-spacing:0;font-style:normal}
 .sec h3::after{content:"";flex:1;height:1px;background:var(--line)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
-.c{position:relative;background:var(--tb);border:1.5px solid var(--tl);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,40,40,.07)}
-.c .bd{padding:10px 12px 9px;display:flex;flex-direction:column;gap:8px;flex:1}
-.c .nm{display:flex;align-items:center;gap:9px;font:800 13.5px/1.25 Inter,sans-serif;color:#0b1f1f;text-transform:uppercase}
-.c .nm svg{width:26px;height:26px;flex:none;color:var(--k)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:7px}
+.c{position:relative;background:var(--tb);border:1.5px solid var(--tl);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.c .bd{padding:6px 9px 6px;display:flex;flex-direction:column;gap:5px;flex:1}
+.c .nm{display:flex;align-items:center;gap:7px;font:800 12.5px/1.2 Inter,sans-serif;color:#0b1f1f;text-transform:uppercase}
+.c .nm svg{width:18px;height:18px;flex:none;color:var(--k)}
 .c .nm i{width:1.5px;align-self:stretch;background:var(--tl);flex:none}
 .c .nm span{min-width:0;overflow-wrap:anywhere}
-.c .car{display:flex;align-items:center;gap:8px}
-.c .car span{font:500 12.5px Inter,sans-serif;color:#1c3534}
-.c .car b{font:800 13.5px Inter,sans-serif;color:#0b1f1f;background:#fff;border:1.5px solid var(--k);border-radius:999px;padding:2px 12px;letter-spacing:.02em}
-.c .ts{margin-top:auto;display:grid;grid-template-columns:1fr 1px 1fr;gap:8px;align-items:center;background:rgba(255,255,255,.75);border-radius:8px;padding:7px 9px}
+.c .ts{margin-top:auto;display:grid;grid-template-columns:auto 1px minmax(0,1fr) 1px minmax(0,1fr);gap:7px;align-items:center;background:rgba(255,255,255,.75);border-radius:7px;padding:3px 8px}
 .c .ts i{background:#d5e0df;align-self:stretch}
-.c .ts div{display:flex;gap:6px;align-items:flex-start;min-width:0}
-.c .ts svg{width:16px;height:16px;color:var(--k);flex:none;margin-top:1px}
-.c .ts small{display:block;font:500 11.5px Inter,sans-serif;color:#2b4443}
-.c .ts b{display:block;font:800 13px Inter,sans-serif;color:#0b1f1f;font-variant-numeric:tabular-nums;white-space:nowrap}
-.c .ts .nada{grid-column:1/-1;font:700 12.5px Inter,sans-serif;color:#2b4443;justify-content:center;padding:6px 0}
-.c .st{background:var(--k);color:#fff;display:flex;align-items:center;gap:8px;padding:7px 12px}
-.c .st svg{width:17px;height:17px;flex:none}
-.c .st .lb{font:800 13.5px Inter,sans-serif;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.c .ts small{display:block;font:600 10px/1.2 Inter,sans-serif;color:#2b4443;text-transform:uppercase;letter-spacing:.03em}
+.c .ts small em{font-style:normal;font-weight:800;color:var(--k);display:block}
+.c .ts b{display:block;font:800 12.5px/1.25 Inter,sans-serif;color:#0b1f1f;font-variant-numeric:tabular-nums;white-space:nowrap}
+.c .ts div{min-width:0}
+.c .ts .car{display:inline-block;white-space:nowrap;vertical-align:top;font:800 12px/1.25 Inter,sans-serif;background:#fff;border:1.5px solid var(--k);border-radius:999px;padding:0 7px;margin-top:1px}
+.c .st{background:var(--k);color:#fff;display:flex;align-items:center;gap:7px;padding:3px 9px}
+.c .st svg{width:15px;height:15px;flex:none}
+.c .st .lb{font:800 12.5px Inter,sans-serif;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
 .c .st .sp{width:1px;align-self:stretch;background:rgba(255,255,255,.4);margin:0 2px}
-.c .st .v{display:flex;align-items:center;gap:5px;font:700 13px Inter,sans-serif;white-space:nowrap;margin-left:auto}
+.c .st .v{display:flex;align-items:center;gap:4px;font:700 12.5px Inter,sans-serif;white-space:nowrap;margin-left:auto}
+.c .st .v svg{width:14px;height:14px}
 .c.INAPTO,.c.VENCIDO,.c.SEM_TESTE{--tb:#fde4e1;--tl:#ef9f97;--k:#b42318}
 .c.VENCENDO{--tb:#fdf3d2;--tl:#e3c76c;--k:#9a6400}
 .c.OK{--tb:#e2f4ea;--tl:#9fd5b8;--k:#0f7a45}
@@ -234,6 +232,9 @@ var ICO={
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m8.5 8.5 7 7M15.5 8.5l-7 7"/></svg>',
   al:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17.5v.01"/></svg>',
   rel:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'};
+/* data só aparece no rótulo quando não é hoje (ex.: VALIDADE 11/11), a hora fica sempre grande */
+function dh(rot,x){if(!x)return '<div><small>'+rot+'</small><b>—</b></div>';var c=hd(x),dt=c.length>5?String(x).slice(0,5):'';
+  return '<div><small>'+rot+(dt?' <em>'+dt+'</em>':'')+'</small><b>'+esc(String(x).slice(-5))+'</b></div>';}
 function card(l){
   var s=situacao(l), v='';
   if(s==='INAPTO') v='não liberado';
@@ -241,11 +242,9 @@ function card(l){
   var ic=(s==='OK'||s==='VENCENDO')?ICO.ok:s==='INAPTO'?ICO.x:ICO.al;
   return '<div class="c '+s+(critico(l)?' crit':'')+'"><div class="bd">'+
     '<div class="nm">'+ICO.pes+'<i></i><span>'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</span></div>'+
-    '<div class="car"><span>Carro</span><b>'+esc(l.frota||'—')+'</b></div>'+
-    '<div class="ts">'+(l.teste?
-      '<div>'+ICO.cal+'<span><small>Realizado</small><b>'+esc(l.teste)+'</b></span></div><i></i>'+
-      '<div>'+ICO.cal+'<span><small>Validade</small><b>'+esc(l.validade||'—')+'</b></span></div>'
-      :'<div class="nada">Nenhum teste registrado</div>')+'</div>'+
+    '<div class="ts"><div><small>Carro</small><b class="car" title="'+esc(l.frota||'')+'">'+esc(l.frota||'—')+'</b></div>'+
+      (l.teste?'<i></i>'+dh('Teste',l.teste)+'<i></i>'+dh('Validade',l.validade)
+      :'<i></i><div style="grid-column:3/-1"><small>Teste</small><b>Nenhum registrado</b></div>')+'</div>'+
     '</div><div class="st">'+ic+'<span class="lb">'+rotulo(l)+'</span>'+(v?'<span class="sp"></span><span class="v">'+v+'</span>':'')+'</div>'+
   '</div>';
 }
