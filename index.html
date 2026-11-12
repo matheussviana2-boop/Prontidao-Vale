@@ -237,7 +237,6 @@ function card(l){
   var cls=s;
   return '<div class="c '+cls+(critico(l)?' crit':'')+'">'+
     '<div class="nm">'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</div>'+
-    (l.tipo==='SALA'?'<div class="ln">Carro <b>'+esc(l.sala)+'</b> · check-in <b>'+esc(hd(l.checkin))+'</b></div>':'<div class="ln">Carro <b>'+esc(l.frota||'—')+'</b></div>')+
     '<div class="ts">'+(l.teste?'<span>Realizado</span><b>'+esc(l.teste)+'</b><span>Validade</span><b>'+esc(l.validade||'—')+'</b>':'<div class="nada">Nenhum teste registrado</div>')+'</div>'+
     '<div class="t"><span class="lb">'+rotulo(l)+'</span><b>'+v+'</b></div>'+
   '</div>';
