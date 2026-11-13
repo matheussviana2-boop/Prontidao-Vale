@@ -48,6 +48,8 @@ input[type=search]{width:220px}
 .live i{width:8px;height:8px;border-radius:50%;background:var(--brand2);animation:ping 1.6s infinite}
 .live.off{color:var(--red)} .live.off i{background:var(--red);animation:none}
 @keyframes ping{0%{box-shadow:0 0 0 0 rgba(34,192,176,.7)}100%{box-shadow:0 0 0 8px rgba(34,192,176,0)}}
+.fontes{display:flex;flex-direction:column;gap:1px;font:500 10.5px/1.3 Inter,sans-serif;color:var(--muted);text-align:right;white-space:nowrap}
+.fontes b{font:600 10.5px "JetBrains Mono",monospace;color:#3d5655}
 .clock{text-align:right;border-left:1px solid var(--line);padding-left:12px}
 .clock b{font:700 26px "JetBrains Mono",monospace;line-height:1;display:block}
 .clock small{font-size:10.5px;color:var(--muted);white-space:nowrap}
@@ -158,6 +160,7 @@ var API=(function(){
   <div class="pills" id="pills"></div>
   <div class="ctl"><select id="base1"><option value="">Todas as bases</option></select></div>
   <div class="live" id="live"><i></i><span>AO VIVO</span></div>
+  <div class="fontes" id="fontes" title="Última consulta com sucesso em cada sistema"></div>
   <div class="clock"><b id="clk">--:--</b><small id="upd">carregando…</small></div>
   <button class="btn pri" id="btv" title="Tela cheia para TV">▣ Modo TV</button>
   <button class="btn" id="sairtv" title="Sair do modo TV (Esc)">✕ Sair</button>
@@ -366,7 +369,8 @@ function tique(){
   if(off&&Date.now()-ultimaBusca>30000){atualizar();return;}   // antes de avisar, confirma com uma busca nova
   $('live').className='live'+(off?' off':''); $('live').lastChild.textContent=off?'SEM DADOS NOVOS':'AO VIVO';
   if(off&&!$('msg').innerHTML) $('msg').innerHTML='<div class="msg">Os dados não são atualizados há '+at+' min. O coletor pode estar desligado.</div>';
-  $('upd').textContent=agora.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'})+(D1?' · dados '+String(D1.atualizadoEm).slice(11,16):'');
+  $('fontes').innerHTML=D1?'<span>Cittati <b>'+esc(D1.cittatiEm||String(D1.atualizadoEm).slice(0,5)+' '+String(D1.atualizadoEm).slice(11,19))+'</b></span><span>Prontos <b>'+esc(D1.prontosEm||'—')+'</b></span>':'';
+  $('upd').textContent=agora.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit'});
 }
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-ultimaBusca>15000)atualizar();});
 setInterval(function(){if(D1)tela1();},30000);
