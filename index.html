@@ -215,6 +215,8 @@ function vence(l){return l.venceMin==null?null:l.venceMin-(Date.now()-rec1)/6000
 /* Sem teste = nenhum teste registrado no Prontos; Teste vencido = fez teste, mas a validade já passou */
 function catV(l){return l.cat==='SEM_TESTE'&&/vencid/i.test(l.detalhe||'')?'VENCIDO':l.cat==='OK'&&l.liberadoManual?'LIBERADO':l.cat;}
 /* Monitoramento: quem não tem teste válido hoje (nenhum teste, ou o último é de dia anterior e venceu) = Sem teste */
+/* garagistas não fazem teste de prontidão: identificados por GARAGISTA no nome (cadastro ou login do ICS) */
+function garagista(l){return /GARAGISTA/i.test([l.nome,l.motoristaICS,l.motorista].filter(Boolean).join(' '));}
 function situacao(l){if(l.cat==='OK'&&l.venceMin!=null&&vence(l)<=120)return 'VENCENDO';var c=catV(l);return c==='VENCIDO'?'SEM_TESTE':c;}
 function critico(l){var s=situacao(l);return (s==='INAPTO'||s==='VENCIDO'||s==='SEM_TESTE')&&l.veloc>0;}
 var IGN='<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M8 1.8v6"/><path d="M4.3 4.3a5.3 5.3 0 1 0 7.4 0"/></svg>';
@@ -264,7 +266,7 @@ function ordenar(a,b){
 }
 function tela1(){
   if(!D1) return;
-  var todas=D1.linhas.filter(function(l){return ORD[l.cat]!=null;});
+  var todas=D1.linhas.filter(function(l){return ORD[l.cat]!=null&&!garagista(l);});
   preencherBases($('base1'),todas);
   var base=$('base1').value, q=$('q1').value.trim();
   var D=todas.filter(function(l){return !base||l.base===base;});
@@ -287,7 +289,10 @@ function tela1(){
       '<div class="grid">'+L.map(card).join('')+'</div></section>';
   }).join('')||'<div class="empty">Ninguém neste filtro agora.</div>';
   var ni=D1.linhas.filter(function(l){return l.cat==='NAO_IDENTIFICADO';});
-  $('nota1').textContent=ni.length?ni.length+' login(s) sem matrícula identificada no cadastro não entram na contagem.':'';
+  var ng=D1.linhas.filter(garagista).length, nt=[];
+  if(ni.length) nt.push(ni.length+' login(s) sem matrícula identificada no cadastro não entram na contagem');
+  if(ng) nt.push(ng+' garagista(s) logado(s) não entram na regra (não fazem teste de prontidão)');
+  $('nota1').textContent=nt.join(' · ');
 }
 $('q1').oninput=tela1; $('q2').oninput=tela2; $('base1').onchange=function(){tela1();if(ABA==='dia')tela2();};
 
@@ -298,7 +303,7 @@ function escolherDia(d){if(d===DIA_SEL)return;DIA_SEL=d;D2=null;$('g2').innerHTM
 function tela2(){
   if(!D2) return;
   var base=$('base1').value, q=$('q2').value.trim();
-  var D=D2.linhas.filter(function(l){return !base||l.base===base;});
+  var D=D2.linhas.filter(function(l){return (!base||l.base===base)&&!garagista(l);});
   var n=function(c){return D.filter(function(l){return catV(l)===c;}).length;};
   var S=[['','Viagens finalizadas',D.length,'var(--brand)'],['OK','Teste OK',n('OK'),'var(--green)'],['LIBERADO','Liberado manual',n('LIBERADO'),'var(--green)'],['VENCIDO','Teste vencido',n('VENCIDO'),'var(--red)'],['SEM_TESTE','Sem teste',n('SEM_TESTE'),'var(--orange)'],['INAPTO','Inapto',n('INAPTO'),'var(--red)']];
   $('stats2').innerHTML='<span class="seg"><button class="'+(DIA_SEL==='hoje'?'on':'')+'" onclick="escolherDia(\'hoje\')">Hoje</button><button class="'+(DIA_SEL==='ontem'?'on':'')+'" onclick="escolherDia(\'ontem\')">Ontem</button></span>'+S.map(function(x){return '<button class="pill" data-c="'+x[0]+'" aria-pressed="'+(F2===x[0])+'" style="--c:'+x[3]+'"><i></i><b>'+x[2]+'</b>'+x[1]+'</button>';}).join('')+
