@@ -213,17 +213,19 @@ function carregar1(){
     .catch(erro);
 }
 function vence(l){return l.venceMin==null?null:l.venceMin-(Date.now()-rec1)/60000;}
-function catV(l){return l.cat;}   // viagens: OK (verde) · SEM_TESTE / INAPTO (vermelho) · NAO_AVALIADO
+function catV(l){return l.cat==='INAPTO'&&!bloqueado(l)?'OK':l.cat;}   // viagens: OK (verde) · SEM_TESTE / INAPTO (vermelho) · NAO_AVALIADO
 /* Monitoramento: quem não tem teste válido hoje (nenhum teste, ou o último é de dia anterior e venceu) = Sem teste */
 /* garagistas não fazem teste de prontidão: identificados por GARAGISTA no nome (cadastro ou login do ICS) */
 function garagista(l){return /GARAGISTA/i.test([l.nome,l.motoristaICS,l.motorista].filter(Boolean).join(' '));}
 /* REGRA (19/11): só 2 cores. Vale qualquer teste realizado HOJE (00:00–23:59); não há vencimento.
    Vermelho: sem teste hoje, teste sem liberação (nota abaixo do mínimo) ou não identificado. Verde: teste de hoje liberado. */
 function hojeDM(){var d=new Date();return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
+/* mensagem do Prontos que BLOQUEIA o motorista (só essas ficam vermelhas; "Observar comportamento" etc. = liberado) */
+function bloqueado(l){return l.cat==='INAPTO'&&/N[AÃ]O\s*(LIBERAD|PODE|APT)|BLOQUE|AFAST|INAPT|IMPEDID/i.test(l.acao||l.detalhe||'');}
 function situacao(l){
   if(l.cat==='NAO_IDENTIFICADO') return 'NAO_IDENTIFICADO';
   if(!l.teste||String(l.teste).slice(0,5)!==hojeDM()||l.cat==='SEM_TESTE') return 'SEM_TESTE';
-  if(l.cat==='INAPTO') return 'INAPTO';
+  if(bloqueado(l)) return 'INAPTO';
   return 'OK';
 }
 function critico(l){return situacao(l)!=='OK'&&l.veloc>0;}
@@ -313,14 +315,14 @@ function tela2(){
   var D=D2.linhas.filter(function(l){return (!base||l.base===base)&&!garagista(l);});
   var n=function(c){return D.filter(function(l){return catV(l)===c;}).length;};
   var S=[['','Viagens finalizadas',D.length,'var(--brand)'],['OK','Teste OK',n('OK'),'var(--green)'],['SEM_TESTE','Sem teste',n('SEM_TESTE'),'var(--red)'],['INAPTO','Não liberado',n('INAPTO'),'var(--red)']];
-  $('stats2').innerHTML='<span class="seg"><button class="'+(DIA_SEL==='hoje'?'on':'')+'" onclick="escolherDia(\'hoje\')">Hoje</button><button class="'+(DIA_SEL==='ontem'?'on':'')+'" onclick="escolherDia(\'ontem\')">Ontem</button></span>'+S.map(function(x){return '<button class="pill" data-c="'+x[0]+'" aria-pressed="'+(F2===x[0])+'" style="--c:'+x[3]+'"><i></i><b>'+x[2]+'</b>'+x[1]+'</button>';}).join('')+
+  $('stats2').innerHTML=S.map(function(x){return '<button class="pill" data-c="'+x[0]+'" aria-pressed="'+(F2===x[0])+'" style="--c:'+x[3]+'"><i></i><b>'+x[2]+'</b>'+x[1]+'</button>';}).join('')+
     '<span class="info" style="align-self:center;margin-left:8px">'+(D2.ultimaColeta?'Atualizado '+esc(D2.ultimaColeta):'')+'</span>';
   $('stats2').querySelectorAll('button.pill').forEach(function(b){b.onclick=function(){F2=(F2===b.dataset.c?'':b.dataset.c);tela2();};});
   var rows=D.filter(function(l){
     if(F2&&catV(l)!==F2) return false;
     return acha(q,l.motorista+' '+l.matricula+' '+l.linha+' '+l.itinerario+' '+l.frota);
   }).sort(function(a,b){var x=ORD[catV(a)],y=ORD[catV(b)];return (x==null?9:x)-(y==null?9:y);});
-  $('g2').innerHTML=!rows.length?'<div class="empty">'+(D2.linhas.length?'Nenhuma viagem com esse filtro.':'Nenhuma viagem finalizada gravada '+(DIA_SEL==='ontem'?'ontem.':'hoje.'))+'</div>':
+  $('g2').innerHTML=!rows.length?'<div class="empty">'+(D2.linhas.length?'Nenhuma viagem com esse filtro.':'Nenhuma viagem finalizada hoje.')+'</div>':
     '<table><thead><tr><th>Teste</th><th>Motorista</th><th>Viagem</th><th>Veículo</th><th>Partida</th><th>Chegada</th><th>Teste realizado</th></tr></thead><tbody>'+
     rows.map(function(l){
       var cv=catV(l), k=K[cv]||K.NAO_AVALIADO;
