@@ -219,12 +219,15 @@ function catV(l){return l.cat==='INAPTO'&&!bloqueado(l)?'OK':l.cat;}   // viagen
 function garagista(l){return /GARAGISTA/i.test([l.nome,l.motoristaICS,l.motorista].filter(Boolean).join(' '));}
 /* REGRA (19/11): só 2 cores. Vale qualquer teste realizado HOJE (00:00–23:59); não há vencimento.
    Vermelho: sem teste hoje, teste sem liberação (nota abaixo do mínimo) ou não identificado. Verde: teste de hoje liberado. */
+/* o teste vale por 24 h (ex.: teste 22h vale para quem pega às 2h); só fica Sem teste se o último tiver mais de 24 h */
+function testeValeAgora(t){var m=String(t).match(/(\d{2})\/(\d{2})\s+(\d{2}):(\d{2})/);if(!m)return false;var a=new Date();
+  var e=new Date(a.getFullYear(),+m[2]-1,+m[1],+m[3],+m[4]);if(e-a>864e5)e.setFullYear(e.getFullYear()-1);return a-e<=24*3600e3;}
 function hojeDM(){var d=new Date();return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0');}
 /* mensagem do Prontos que BLOQUEIA o motorista (só essas ficam vermelhas; "Observar comportamento" etc. = liberado) */
 function bloqueado(l){return l.cat==='INAPTO'&&/N[AÃ]O\s*(LIBERAD|PODE|APT)|BLOQUE|AFAST|INAPT|IMPEDID/i.test(l.acao||l.detalhe||'');}
 function situacao(l){
   if(l.cat==='NAO_IDENTIFICADO') return 'NAO_IDENTIFICADO';
-  if(!l.teste||String(l.teste).slice(0,5)!==hojeDM()||l.cat==='SEM_TESTE') return 'SEM_TESTE';
+  if(!l.teste||!testeValeAgora(l.teste)||l.cat==='SEM_TESTE') return 'SEM_TESTE';
   if(bloqueado(l)) return 'INAPTO';
   return 'OK';
 }
@@ -261,7 +264,7 @@ function card(l){
     '<div class="nm">'+ICO.pes+'<i></i><span>'+esc(l.nome||l.motoristaICS)+(l.matricula?' - '+esc(l.matricula):'')+'</span></div>'+
     '<div class="ts"><div><small>Carro</small><b class="car" title="'+esc(l.frota||'')+'">'+esc(l.frota||'—')+'</b></div><i></i>'+
       (s==='NAO_IDENTIFICADO'?'<div><small>Teste</small><b>'+(l.matricula?'Erro na consulta':'Login sem cadastro')+'</b></div>'
-      :s==='SEM_TESTE'?'<div><small>Teste realizado</small><b>Nenhum hoje</b></div>'
+      :s==='SEM_TESTE'?'<div><small>Teste realizado</small><b>Nenhum em 24 h</b></div>'
       :dh('Teste realizado',l.teste))+'</div>'+
     '</div><div class="st">'+ic+'<span class="lb">'+esc(rotulo(l))+'</span>'+(v?'<span class="sp"></span><span class="v">'+v+'</span>':'')+'</div>'+
   '</div>';
